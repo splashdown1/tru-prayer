@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#14110e">
+<title>TRU PRAYER</title>
+<style>
+:root{--bg:#14110e;--ink:#f4ecdf;--dim:#b7a898;--line:#3a3026;--gold:#d7a26a;--card:#211a14}
+*{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 Georgia,serif}
+button,input{font:inherit;color:inherit}
+header{padding:16px 16px 6px} h1{font-size:22px;letter-spacing:.14em;margin:0;font-weight:normal} h1 span{color:var(--gold)}
+.sub{color:var(--dim);font-size:13px}
+.bar{display:flex;gap:8px;padding:8px 16px} input{flex:1;background:#0e0c0a;border:1px solid var(--line);border-radius:8px;padding:10px}
+button{background:var(--gold);color:#1a140c;border:0;border-radius:8px;padding:10px 12px;font-weight:bold}
+main{padding:0 16px 28px} .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:0 0 10px}
+.k{color:var(--gold);font-size:12px;letter-spacing:.12em} .big{font-size:20px;margin:4px 0} .src{color:var(--dim);font-size:12px;margin-top:8px}
+.verse{white-space:pre-wrap;line-height:1.55}
+</style>
+</head>
+<body>
+<header>
+  <h1>TRU <span>PRAYER</span></h1>
+  <p class="sub">Fixed KJV texts only. No generation. A missing text is a gap.</p>
+</header>
+<div class="bar">
+  <input id="q" placeholder="psalm 23, lord, our father, 91…" enterkeyhint="search" autocomplete="off">
+  <button id="send">Send</button>
+</div>
+<main id="out"></main>
+<script>
+const P=[
+{t:"The Lord's Prayer",ref:"Matthew 6:9-13",text:"Our Father which art in heaven, Hallowed be thy name.\nThy kingdom come. Thy will be done in earth, as it is in heaven.\nGive us this day our daily bread.\nAnd forgive us our debts, as we forgive our debtors.\nAnd lead us not into temptation, but deliver us from evil: For thine is the kingdom, and the power, and the glory, for ever. Amen."},
+{t:"Psalm 23",ref:"Psalm 23",text:"The LORD is my shepherd; I shall not want.\nHe maketh me to lie down in green pastures: he leadeth me beside the still waters.\nHe restoreth my soul: he leadeth me in the paths of righteousness for his name's sake.\nYea, though I walk through the valley of the shadow of death, I will fear no evil: for thou art with me; thy rod and thy staff they comfort me.\nThou preparest a table before me in the presence of mine enemies: thou anointest my head with oil; my cup runneth over.\nSurely goodness and mercy shall follow me all the days of my life: and I will dwell in the house of the LORD for ever."},
+{t:"Psalm 91",ref:"Psalm 91:1-16",text:"He that dwelleth in the secret place of the most High shall abide under the shadow of the Almighty.\nI will say of the LORD, He is my refuge and my fortress: my God; in him will I trust.\nSurely he shall deliver thee from the snare of the fowler, and from the noisome pestilence.\nHe shall cover thee with his feathers, and under his wings shalt thou trust: his truth shall be thy shield and buckler.\nThou shalt not be afraid for the terror by night; nor for the arrow that flieth by day;\nNor for the pestilence that walketh in darkness; nor for the destruction that wasteth at noonday.\nA thousand shall fall at thy side, and ten thousand at thy right hand; but it shall not come nigh thee.\nOnly with thine eyes shalt thou behold and see the reward of the wicked.\nBecause thou hast made the LORD, which is my refuge, even the most High, thy habitation;\nThere shall no evil befall thee, neither shall any plague come nigh thy dwelling.\nFor he shall give his angels charge over thee, to keep thee in all thy ways.\nThey shall bear thee up in their hands, lest thou dash thy foot against a stone.\nThou shalt tread upon the lion and adder: the young lion and the dragon shalt thou trample under feet.\nBecause he hath set his love upon me, therefore will I deliver him: I will set him on high, because he hath known my name.\nHe shall call upon me, and I will answer him: I will be with him in trouble; I will deliver him, and honour him.\nWith long life will I satisfy him, and shew him my salvation."},
+{t:"John 3:16",ref:"John 3:16",text:"For God so loved the world, that he gave his only begotten Son, that whosoever believeth in him should not perish, but have everlasting life."},
+{t:"Psalm 46:1-3",ref:"Psalm 46:1-3",text:"God is our refuge and strength, a very present help in trouble.\nTherefore will not we fear, though the earth be removed, and though the mountains be carried into the midst of the sea;\nThough the waters thereof roar and be troubled, though the mountains shake with the swelling thereof. Selah."},
+{t:"Psalm 121",ref:"Psalm 121",text:"I will lift up mine eyes unto the hills, from whence cometh my help.\nMy help cometh from the LORD, which made heaven and earth.\nHe will not suffer thy foot to be moved: he that keepeth thee will not slumber.\nBehold, he that keepeth Israel shall neither slumber nor sleep.\nThe LORD is thy keeper: the LORD is thy shade upon thy right hand.\nThe sun shall not smite thee by day, nor the moon by night.\nThe LORD shall preserve thee from all evil: he shall preserve thy soul.\nThe LORD shall preserve thy going out and thy coming in from this time forth, and even for evermore."},
+{t:"Philippians 4:6-7",ref:"Philippians 4:6-7",text:"Be careful for nothing; but in every thing by prayer and supplication with thanksgiving let your requests be made known unto God.\nAnd the peace of God, which passeth all understanding, shall keep your hearts and minds through Christ Jesus."},
+{t:"Romans 8:28",ref:"Romans 8:28",text:"And we know that all things work together for good to them that love God, to them who are the called according to his purpose."},
+{t:"Isaiah 41:10",ref:"Isaiah 41:10",text:"Fear thou not; for I am with thee: be not dismayed; for I am thy God: I will strengthen thee; yea, I will help thee; yea, I will uphold thee with the right hand of my righteousness."},
+{t:"Matthew 11:28-30",ref:"Matthew 11:28-30",text:"Come unto me, all ye that labour and are heavy laden, and I will give you rest.\nTake my yoke upon you, and learn of me; for I am meek and lowly in heart: and ye shall find rest unto your souls.\nFor my yoke is easy, and my burden is light."}
+];
+function esc(s){return String(s).replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));}
+function card(x){
+  return `<article class="card"><div class="k">PRAYER</div><div class="big">${esc(x.t)}</div><div class="verse">${esc(x.text)}</div><div class="src">${esc(x.ref)} · King James Version · public domain</div></article>`;
+}
+function show(list){document.getElementById("out").innerHTML=list.map(card).join("");}
+function search(q){
+  q=(q||"").trim().toLowerCase();
+  if(!q){show(P);return;}
+  const hits=P.filter(x=>(x.t+" "+x.ref+" "+x.text).toLowerCase().includes(q));
+  document.getElementById("out").innerHTML=hits.length?hits.map(card).join(""):`<article class="card"><div class="k">GAP</div><div class="big">Not packed</div><div>Only the fixed KJV texts on this card. No invented prayer.</div></article>`;
+}
+document.getElementById("send").onclick=()=>search(document.getElementById("q").value);
+document.getElementById("q").onkeydown=e=>{if(e.key==="Enter")search(e.target.value);};
+show(P);
+</script>
+</body>
+</html>
